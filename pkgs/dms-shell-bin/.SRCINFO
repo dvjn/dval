@@ -1,0 +1,28 @@
+pkgbase = dms-shell-bin
+	pkgdesc = Desktop shell for wayland compositors built with Quickshell & GO (binary release)
+	pkgver = 1.5.2
+	pkgrel = 1
+	url = https://github.com/AvengeMedia/DankMaterialShell
+	arch = x86_64
+	arch = aarch64
+	license = MIT
+	depends = dgop
+	depends = quickshell
+	depends = accountsservice
+	optdepends = cava: Audio visualizer
+	optdepends = i2c-tools: External monitor brightness control
+	optdepends = matugen: Dynamic wallpaper-based theming
+	optdepends = qt6-multimedia: Sound effect support
+	optdepends = power-profiles-daemon: Set power profile
+	optdepends = qt6ct: Qt6 application theming
+	optdepends = cups-pk-helper: Printer Management
+	optdepends = greetd-dms-greeter-bin: Matching greeter for greetd
+	provides = dms-shell=1.5.2
+	conflicts = dms-shell
+	conflicts = dms-shell-git
+	source_x86_64 = dms-full-amd64-1.5.2.tar.gz::https://github.com/AvengeMedia/DankMaterialShell/releases/download/v1.5.2/dms-full-amd64.tar.gz
+	sha256sums_x86_64 = 4469218d2d5dc11aab1c11e926807eb23ff7d549454fa8a7df67d1c13d0850ec
+	source_aarch64 = dms-full-arm64-1.5.2.tar.gz::https://github.com/AvengeMedia/DankMaterialShell/releases/download/v1.5.2/dms-full-arm64.tar.gz
+	sha256sums_aarch64 = 116d994733f67221bab2097a2edace0aef04a11b719a0d9f51a984ea4d118206
+
+pkgname = dms-shell-bin

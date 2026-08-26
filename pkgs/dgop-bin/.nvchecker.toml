@@ -1,0 +1,5 @@
+[dgop-bin]
+source = "github"
+github = "AvengeMedia/dgop"
+use_latest_release = true
+prefix = "v"

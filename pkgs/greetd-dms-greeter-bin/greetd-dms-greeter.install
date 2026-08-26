@@ -1,0 +1,23 @@
+_ensure_greeter_user() {
+	getent passwd greeter > /dev/null && return
+
+	for tool in /usr/bin/esysusers /usr/bin/systemd-sysusers; do
+		if [ -x "$tool" ]; then
+			"$tool" /usr/lib/sysusers.d/greetd.conf > /dev/null 2>&1 && break
+		fi
+	done
+
+	getent passwd greeter > /dev/null || \
+		useradd --system --home-dir /var/lib/greeter \
+			--shell /usr/bin/nologin greeter
+}
+
+post_install() {
+	_ensure_greeter_user
+	chown greeter:greeter /var/cache/dms-greeter
+	chmod 750 /var/cache/dms-greeter
+}
+
+post_upgrade() {
+	post_install
+}

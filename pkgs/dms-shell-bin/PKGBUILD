@@ -1,0 +1,57 @@
+# Maintainer: dvjn <git@dvjn.dev>
+
+pkgname=dms-shell-bin
+pkgver=1.5.2
+pkgrel=1
+pkgdesc='Desktop shell for wayland compositors built with Quickshell & GO (binary release)'
+arch=('x86_64' 'aarch64')
+url='https://github.com/AvengeMedia/DankMaterialShell'
+license=('MIT')
+
+depends=('dgop'
+         'quickshell'
+         'accountsservice')
+
+optdepends=('cava: Audio visualizer'
+            'i2c-tools: External monitor brightness control'
+            'matugen: Dynamic wallpaper-based theming'
+            'qt6-multimedia: Sound effect support'
+            'power-profiles-daemon: Set power profile'
+            'qt6ct: Qt6 application theming'
+            'cups-pk-helper: Printer Management'
+            'greetd-dms-greeter-bin: Matching greeter for greetd')
+
+provides=("dms-shell=$pkgver")
+conflicts=('dms-shell' 'dms-shell-git')
+
+source_x86_64=("dms-full-amd64-${pkgver}.tar.gz::$url/releases/download/v$pkgver/dms-full-amd64.tar.gz")
+source_aarch64=("dms-full-arm64-${pkgver}.tar.gz::$url/releases/download/v$pkgver/dms-full-arm64.tar.gz")
+
+sha256sums_x86_64=('4469218d2d5dc11aab1c11e926807eb23ff7d549454fa8a7df67d1c13d0850ec')
+sha256sums_aarch64=('116d994733f67221bab2097a2edace0aef04a11b719a0d9f51a984ea4d118206')
+
+package() {
+    cd "$srcdir"
+
+    install -Dm755 bin/dms-distropkg "$pkgdir/usr/bin/dms"
+
+    install -dm755 "$pkgdir/usr/share/quickshell"
+    cp -r dms "$pkgdir/usr/share/quickshell/dms"
+
+    rm -rf "$pkgdir/usr/share/quickshell/dms/systemd" \
+           "$pkgdir/usr/share/quickshell/dms/assets/systemd"
+
+    install -Dm644 dms/assets/systemd/dms.service \
+        "$pkgdir/usr/lib/systemd/user/dms.service"
+
+    install -Dm644 completions/completion.bash "$pkgdir/usr/share/bash-completion/completions/dms"
+    install -Dm644 completions/completion.fish "$pkgdir/usr/share/fish/vendor_completions.d/dms.fish"
+    install -Dm644 completions/completion.zsh  "$pkgdir/usr/share/zsh/site-functions/_dms"
+
+    for desktop in com.danklinux.dms.desktop com.danklinux.dms.notepad.desktop dms-open.desktop; do
+        install -Dm644 "dms/assets/$desktop" "$pkgdir/usr/share/applications/$desktop"
+    done
+
+    install -Dm644 dms/LICENSE "$pkgdir/usr/share/licenses/$pkgname/LICENSE"
+    install -Dm644 INSTALL.md "$pkgdir/usr/share/doc/$pkgname/INSTALL.md"
+}

@@ -1,0 +1,84 @@
+# Maintainer: dvjn <git@dvjn.dev>
+
+pkgbase=dval
+pkgname=("dval-base" "dval-desktop")
+pkgver=0.1.0
+pkgrel=1
+arch=("any")
+url="https://github.com/dvjn/dval"
+license=("MIT")
+
+source=("dval" "greetd-config.toml" "greetd-greeter.pam")
+sha256sums=("2a36fa2045173a6313c5d99c8c2ea74990585c338e70d635d10686c7b9a8cb7f"
+            "9c5efee888e573b818a08a886a7d44f400f57a5bbbcdbbf5d309c8c48fb85287"
+            "e9eb324bfb957664761c6527b2632ed1bb0bb30e9818a3946f72f36661b8e767")
+
+package_dval-base() {
+    pkgdesc="dvjn's artix linux base (metapackage)"
+
+    depends=(
+        "base-devel"
+        "git"
+        "aurutils"
+        "neovim"
+        "man-db"
+        "man-pages"
+        "openssh"
+        "openssh-dinit"
+        "connman"
+        "connman-dinit"
+        "btrfs-progs"
+        "sudo"
+    )
+
+    install -Dm755 "$srcdir/dval" "$pkgdir/usr/bin/dval"
+}
+
+package_dval-desktop() {
+    pkgdesc="dvjn's artix linux desktop (metapackage)"
+
+    backup=("etc/pam.d/greetd-greeter")
+    install="dval-desktop.install"
+
+    depends=(
+        "dval-base"
+        "dms-shell"
+        "greetd-dms-greeter-bin"
+        "niri"
+        "greetd"
+        "greetd-dinit"
+        "xdg-desktop-portal-gnome"
+        "xdg-desktop-portal-gtk"
+        "pipewire"
+        "pipewire-pulse"
+        "pipewire-jack"
+        "wireplumber"
+        "userspawn-dinit"
+        "pipewire-dinit"
+        "pipewire-pulse-dinit"
+        "wireplumber-dinit"
+        "matugen-bin"
+        "cliphist"
+        "wl-clipboard"
+        "cava"
+        "slurp"
+        "qt6-multimedia"
+        "qt6-multimedia-ffmpeg"
+        "i2c-tools"
+        "accountsservice"
+        "ghostty"
+        "ttf-nerd-fonts-symbols"
+        "ttf-fira-code"
+    )
+
+    install -Dm644 "$srcdir/greetd-config.toml" \
+        "$pkgdir/usr/share/doc/$pkgname/greetd-config.toml"
+    install -Dm644 "$srcdir/greetd-greeter.pam" \
+        "$pkgdir/etc/pam.d/greetd-greeter"
+
+    install -dm755 "$pkgdir/etc/xdg/userspawn/dinit.d/boot.d"
+    for svc in pipewire pipewire-pulse wireplumber; do
+        ln -s "/etc/dinit.d/user/$svc" \
+            "$pkgdir/etc/xdg/userspawn/dinit.d/boot.d/$svc"
+    done
+}

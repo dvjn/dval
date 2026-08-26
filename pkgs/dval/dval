@@ -1,0 +1,197 @@
+#!/bin/sh
+set -eu
+
+DVAL_NAME=dval
+DVAL_REPO_DIR=/var/cache/pacman/$DVAL_NAME
+DVAL_DEFAULT_SRC=${XDG_DATA_HOME:-$HOME/.local/share}/dval
+
+dval_self_dir=$(cd "$(dirname "$0")" && pwd)
+if [ -f "$dval_self_dir/queue" ]; then
+	DVAL_SRC_DIR=$dval_self_dir
+else
+	DVAL_SRC_DIR=${DVAL_REPO:-$DVAL_DEFAULT_SRC}
+fi
+
+dval_die() {
+	echo "$DVAL_NAME: $*" >&2
+	exit 1
+}
+
+dval_require_user() {
+	[ "$(id -u)" -ne 0 ] || dval_die "run as your user, not root"
+}
+
+dval_require_src() {
+	[ -f "$DVAL_SRC_DIR/queue" ] || dval_die "no package tree at $DVAL_SRC_DIR"
+}
+
+dval_repo_init() {
+	sudo install -d -o "$(id -un)" "$DVAL_REPO_DIR"
+	[ -e "$DVAL_REPO_DIR/$DVAL_NAME.db.tar.zst" ] || \
+		repo-add -q "$DVAL_REPO_DIR/$DVAL_NAME.db.tar.zst"
+
+	grep -q "^\[$DVAL_NAME\]" /etc/pacman.conf && return
+	sudo cp /etc/pacman.conf /etc/pacman.conf.bak
+	printf '\n[%s]\nSigLevel = Optional TrustAll\nServer = file://%s\n' \
+		"$DVAL_NAME" "$DVAL_REPO_DIR" | sudo tee -a /etc/pacman.conf > /dev/null
+	echo "added [$DVAL_NAME] to /etc/pacman.conf"
+}
+
+dval_repo_add() {
+	pkg_file=$1
+	sudo install -m644 -o "$(id -un)" "$pkg_file" "$DVAL_REPO_DIR/"
+	repo-add -q -R "$DVAL_REPO_DIR/$DVAL_NAME.db.tar.zst" \
+		"$DVAL_REPO_DIR/$(basename "$pkg_file")"
+}
+
+dval_have_built() {
+	pkg=$1
+	for want in $(cd "$DVAL_SRC_DIR/pkgs/$pkg" && makepkg --packagelist 2>/dev/null); do
+		[ -e "$DVAL_REPO_DIR/$(basename "$want")" ] || return 1
+	done
+	return 0
+}
+
+dval_build_one() {
+	pkg=$1
+	[ -d "$DVAL_SRC_DIR/pkgs/$pkg" ] || dval_die "no package dir: $pkg"
+
+	if [ "${DVAL_FORCE:-}" != 1 ] && dval_have_built "$pkg"; then
+		echo ":: $pkg up to date"
+		return 0
+	fi
+
+	echo ":: building $pkg"
+	( cd "$DVAL_SRC_DIR/pkgs/$pkg" && makepkg -f )
+
+	for built in "$DVAL_SRC_DIR/pkgs/$pkg"/*.pkg.tar.zst; do
+		[ -e "$built" ] || dval_die "$pkg produced nothing"
+		dval_repo_add "$built"
+		rm -f "$built"
+	done
+}
+
+dval_build_queue() {
+	while read -r pkg; do
+		[ -n "$pkg" ] || continue
+		dval_build_one "$pkg"
+	done < "$DVAL_SRC_DIR/queue"
+}
+
+dval_parse_target() {
+	case "${1:-desktop}" in
+		base)    echo base ;;
+		desktop) echo desktop ;;
+		*)       dval_die "unknown target: $1 (base|desktop)" ;;
+	esac
+}
+
+dval_build() {
+	dval_require_user
+	dval_require_src
+	dval_repo_init
+	dval_build_queue
+	sudo pacman -Sy
+}
+
+dval_install() {
+	target=$(dval_parse_target "${1:-}")
+	dval_build
+	sudo pacman -S --needed --noconfirm "dval-$target"
+}
+
+dval_setup_base() {
+	:
+}
+
+dval_setup_desktop() {
+	greetd_example=/usr/share/doc/dval-desktop/greetd-config.toml
+	greetd_config=/etc/greetd/config.toml
+	[ -f "$greetd_example" ] || dval_die "dval-desktop is not installed"
+
+	if [ -e "$greetd_config" ]; then
+		greetd_backup=$greetd_config.bak-$(date +%Y%m%d%H%M%S)
+		sudo cp -a "$greetd_config" "$greetd_backup"
+		echo "backed up existing config to $greetd_backup"
+	fi
+	sudo install -Dm644 "$greetd_example" "$greetd_config"
+	echo "wrote $greetd_config"
+
+	if [ -e /etc/dinit.d/boot.d/greetd ]; then
+		echo "greetd already enabled"
+	else
+		sudo dinitctl enable greetd
+		echo "greetd enabled and started."
+	fi
+}
+
+dval_setup_user_base() {
+	:
+}
+
+dval_setup_user_desktop() {
+	printf '1\n1\n2\ny\n' | dms setup
+
+	niri_config=${XDG_CONFIG_HOME:-$HOME/.config}/niri/config.kdl
+	grep -q 'spawn-at-startup "dms" "run"' "$niri_config" 2>/dev/null || \
+		dval_die "dms setup did not deploy as expected; run 'dms setup' by hand"
+}
+
+dval_cmd_bootstrap() {
+	target=$(dval_parse_target "${1:-}")
+
+	dval_install "$target"
+	dval_do_setup "$target"
+	dval_do_setup_user "$target"
+}
+
+dval_cmd_update() {
+	dval_require_user
+	dval_require_src
+
+	if [ -d "$DVAL_SRC_DIR/.git" ]; then
+		echo ":: pulling $DVAL_SRC_DIR"
+		git -C "$DVAL_SRC_DIR" pull --ff-only
+	fi
+	dval_build
+	sudo pacman -Syu
+}
+
+dval_do_setup() {
+	dval_require_user
+	setup_target=$(dval_parse_target "${1:-}")
+	"dval_setup_$setup_target"
+}
+
+dval_do_setup_user() {
+	dval_require_user
+	setup_user_target=$(dval_parse_target "${1:-}")
+	"dval_setup_user_$setup_user_target"
+}
+
+dval_cmd_help() {
+	cat <<EOF
+usage: $DVAL_NAME <command> [args]
+
+  bootstrap, b [base|desktop]    build, install, and set up
+  update, u                      pull, rebuild, then pacman -Syu
+  help                           this
+
+package tree: $DVAL_SRC_DIR
+local repo:   $DVAL_REPO_DIR
+EOF
+}
+
+dval_main() {
+	cmd=${1:-help}
+	[ "$#" -gt 0 ] && shift || true
+
+	case "$cmd" in
+		bootstrap|b)    dval_cmd_bootstrap "$@" ;;
+		update|u)       dval_cmd_update "$@" ;;
+		help|-h|--help) dval_cmd_help ;;
+		*)              dval_die "unknown command: $cmd (try '$DVAL_NAME help')" ;;
+	esac
+}
+
+dval_main "$@"
