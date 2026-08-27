@@ -2,14 +2,14 @@
 
 pkgbase=dval
 pkgname=("dval-base" "dval-desktop")
-pkgver=0.1.3
+pkgver=0.1.4
 pkgrel=1
 arch=("any")
 url="https://github.com/dvjn/dval"
 license=("MIT")
 
 source=("dval" "greetd-config.toml" "greetd-greeter.pam")
-sha256sums=("7f84ede57371d35c24ba0fe7fd38494245dad05409b116aefe4f9c263e195978"
+sha256sums=("dac1b9d8fe792af934560e25d4a6a20cdfa56264f768853f0b2f673d08f7af5e"
             "9c5efee888e573b818a08a886a7d44f400f57a5bbbcdbbf5d309c8c48fb85287"
             "e9eb324bfb957664761c6527b2632ed1bb0bb30e9818a3946f72f36661b8e767")
 
@@ -57,6 +57,7 @@ package_dval-desktop() {
         "pipewire-dinit"
         "pipewire-pulse-dinit"
         "wireplumber-dinit"
+        "power-profiles-daemon-dinit"
         "cliphist"
         "wl-clipboard"
         "slurp"
@@ -75,6 +76,7 @@ package_dval-desktop() {
         "matugen"                # dms-shell: wallpaper-based theming
         "qt6-multimedia"         # dms-shell: sound effects
         "upower"                 # dms-shell: battery and power profile widgets
+        "power-profiles-daemon"  # dms-shell: power profile switching
         "ffmpeg"                 # zen-browser: H.264 and AV1 playback
         "libpulse"               # zen-browser: audio through pipewire-pulse
         "libnotify"              # zen-browser: desktop notifications

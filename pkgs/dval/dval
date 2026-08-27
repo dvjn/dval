@@ -110,6 +110,16 @@ dval_setup_base() {
 	:
 }
 
+dval_enable_service() {
+	service=$1
+	if [ -e "/etc/dinit.d/boot.d/$service" ]; then
+		echo "$service already enabled"
+	else
+		sudo dinitctl enable "$service"
+		echo "$service enabled and started"
+	fi
+}
+
 dval_setup_desktop() {
 	greetd_example=/usr/share/doc/dval-desktop/greetd-config.toml
 	greetd_config=/etc/greetd/config.toml
@@ -123,12 +133,8 @@ dval_setup_desktop() {
 	sudo install -Dm644 "$greetd_example" "$greetd_config"
 	echo "wrote $greetd_config"
 
-	if [ -e /etc/dinit.d/boot.d/greetd ]; then
-		echo "greetd already enabled"
-	else
-		sudo dinitctl enable greetd
-		echo "greetd enabled and started."
-	fi
+	dval_enable_service greetd
+	dval_enable_service power-profiles-daemon
 }
 
 dval_setup_user_base() {
