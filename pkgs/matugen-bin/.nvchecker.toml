@@ -1,0 +1,5 @@
+[matugen-bin]
+source = "github"
+github = "InioX/matugen"
+use_latest_release = true
+prefix = "v"

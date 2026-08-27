@@ -1,0 +1,5 @@
+[greetd-dms-greeter-bin]
+source = "github"
+github = "AvengeMedia/DankMaterialShell"
+use_latest_release = true
+prefix = "v"

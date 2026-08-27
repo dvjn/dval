@@ -1,0 +1,68 @@
+name: update packages
+
+on:
+  schedule:
+    - cron: "37 4 * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  update:
+    if: github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    container: archlinux:base-devel
+
+    steps:
+      - name: install tools
+        run: pacman -Syu --noconfirm --needed git jq nvchecker github-cli
+
+      - uses: actions/checkout@v7
+
+      - name: mark checkout safe for git
+        run: git config --global --add safe.directory "$GITHUB_WORKSPACE"
+
+      # makepkg refuses to run as root, and the container has no other user.
+      - name: create build user
+        run: |
+          useradd -m builder
+          chown -R builder "$GITHUB_WORKSPACE"
+
+      - name: check for new upstream releases
+        id: check
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+        run: |
+          runuser -u builder -- ./scripts/check-updates.sh | tee "$RUNNER_TEMP/updates.txt"
+          echo "count=$(wc -l < "$RUNNER_TEMP/updates.txt")" >> "$GITHUB_OUTPUT"
+
+      - name: open a pull request per outdated package
+        if: steps.check.outputs.count != '0'
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+        run: |
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          base=$(git rev-parse --abbrev-ref HEAD)
+
+          while read -r pkg current latest; do
+            branch="update/$pkg-$latest"
+            if git ls-remote --exit-code --heads origin "$branch" > /dev/null; then
+              echo ":: $branch already exists, skipping $pkg"
+              continue
+            fi
+
+            git switch --force-create "$branch" "$base"
+            runuser -u builder -- ./scripts/bump-pkgver.sh "$pkg" "$latest"
+            git commit -am "chore($pkg): $current -> $latest"
+            git push --set-upstream origin "$branch"
+            gh pr create \
+              --base "$base" \
+              --head "$branch" \
+              --title "chore($pkg): $current -> $latest" \
+              --body "Upstream released \`$latest\`. pkgver, checksums, and .SRCINFO updated by \`scripts/bump-pkgver.sh\`."
+          done < "$RUNNER_TEMP/updates.txt"
+
+          git switch "$base"
