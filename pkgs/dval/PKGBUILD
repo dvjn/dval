@@ -3,7 +3,7 @@
 pkgbase=dval
 pkgname=("dval-base" "dval-desktop")
 pkgver=0.1.0
-pkgrel=3
+pkgrel=4
 arch=("any")
 url="https://github.com/dvjn/dval"
 license=("MIT")
@@ -74,6 +74,7 @@ package_dval-desktop() {
         "i2c-tools"              # dms-shell: external monitor brightness
         "matugen"                # dms-shell: wallpaper-based theming
         "qt6-multimedia"         # dms-shell: sound effects
+        "upower"                 # dms-shell: battery and power profile widgets
         "ffmpeg"                 # zen-browser: H.264 and AV1 playback
         "libpulse"               # zen-browser: audio through pipewire-pulse
         "libnotify"              # zen-browser: desktop notifications
