@@ -3,7 +3,7 @@
 pkgbase=dval
 pkgname=("dval-base" "dval-desktop")
 pkgver=0.1.0
-pkgrel=1
+pkgrel=2
 arch=("any")
 url="https://github.com/dvjn/dval"
 license=("MIT")
@@ -43,7 +43,7 @@ package_dval-desktop() {
     depends=(
         "dval-base"
         "dms-shell"
-        "greetd-dms-greeter-bin"
+        "greetd-dms-greeter"
         "niri"
         "greetd"
         "greetd-dinit"
@@ -57,7 +57,7 @@ package_dval-desktop() {
         "pipewire-dinit"
         "pipewire-pulse-dinit"
         "wireplumber-dinit"
-        "matugen-bin"
+        "matugen"
         "cliphist"
         "wl-clipboard"
         "cava"

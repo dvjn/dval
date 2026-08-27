@@ -1,7 +1,7 @@
 pkgbase = dms-shell-bin
 	pkgdesc = Desktop shell for wayland compositors built with Quickshell & GO (binary release)
 	pkgver = 1.5.3
-	pkgrel = 1
+	pkgrel = 2
 	url = https://github.com/AvengeMedia/DankMaterialShell
 	arch = x86_64
 	arch = aarch64
@@ -16,7 +16,7 @@ pkgbase = dms-shell-bin
 	optdepends = power-profiles-daemon: Set power profile
 	optdepends = qt6ct: Qt6 application theming
 	optdepends = cups-pk-helper: Printer Management
-	optdepends = greetd-dms-greeter-bin: Matching greeter for greetd
+	optdepends = greetd-dms-greeter: Matching greeter for greetd
 	provides = dms-shell=1.5.3
 	conflicts = dms-shell
 	conflicts = dms-shell-git

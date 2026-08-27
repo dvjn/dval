@@ -2,7 +2,7 @@
 
 pkgname=dms-shell-bin
 pkgver=1.5.3
-pkgrel=1
+pkgrel=2
 pkgdesc='Desktop shell for wayland compositors built with Quickshell & GO (binary release)'
 arch=('x86_64' 'aarch64')
 url='https://github.com/AvengeMedia/DankMaterialShell'
@@ -19,7 +19,7 @@ optdepends=('cava: Audio visualizer'
             'power-profiles-daemon: Set power profile'
             'qt6ct: Qt6 application theming'
             'cups-pk-helper: Printer Management'
-            'greetd-dms-greeter-bin: Matching greeter for greetd')
+            'greetd-dms-greeter: Matching greeter for greetd')
 
 provides=("dms-shell=$pkgver")
 conflicts=('dms-shell' 'dms-shell-git')
