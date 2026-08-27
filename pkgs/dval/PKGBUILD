@@ -2,7 +2,7 @@
 
 pkgbase=dval
 pkgname=("dval-base" "dval-desktop")
-pkgver=0.1.1
+pkgver=0.1.2
 pkgrel=1
 arch=("any")
 url="https://github.com/dvjn/dval"
