@@ -13,11 +13,13 @@ jobs:
   update:
     if: github.ref == 'refs/heads/main'
     runs-on: ubuntu-latest
-    container: archlinux:base-devel
+    container: artixlinux/artixlinux:base-dinit
 
     steps:
       - name: install tools
-        run: pacman -Syu --noconfirm --needed git jq nvchecker github-cli
+        run: |
+          pacman -Syu --noconfirm --needed \
+            base-devel git jq nvchecker github-cli
 
       - uses: actions/checkout@v7
 
