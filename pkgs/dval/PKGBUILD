@@ -3,7 +3,7 @@
 pkgbase=dval
 pkgname=("dval-base" "dval-desktop")
 pkgver=0.1.0
-pkgrel=2
+pkgrel=3
 arch=("any")
 url="https://github.com/dvjn/dval"
 license=("MIT")
@@ -57,18 +57,26 @@ package_dval-desktop() {
         "pipewire-dinit"
         "pipewire-pulse-dinit"
         "wireplumber-dinit"
-        "matugen"
         "cliphist"
         "wl-clipboard"
-        "cava"
         "slurp"
-        "qt6-multimedia"
         "qt6-multimedia-ffmpeg"
-        "i2c-tools"
         "accountsservice"
         "ghostty"
+        "zen-browser"
         "ttf-nerd-fonts-symbols"
         "ttf-fira-code"
+
+        # Optional dependencies of the packages above, made hard here.
+        # Choosing which optional features to enable is this metapackage's job.
+        # The packages themselves keep them optional to stay usable standalone.
+        "cava"                   # dms-shell: audio visualizer
+        "i2c-tools"              # dms-shell: external monitor brightness
+        "matugen"                # dms-shell: wallpaper-based theming
+        "qt6-multimedia"         # dms-shell: sound effects
+        "ffmpeg"                 # zen-browser: H.264 and AV1 playback
+        "libpulse"               # zen-browser: audio through pipewire-pulse
+        "libnotify"              # zen-browser: desktop notifications
     )
 
     install -Dm644 "$srcdir/greetd-config.toml" \

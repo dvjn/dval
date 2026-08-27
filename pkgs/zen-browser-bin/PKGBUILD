@@ -1,0 +1,60 @@
+# Maintainer: dvjn <git@dvjn.dev>
+
+pkgname=zen-browser-bin
+pkgver=1.21.15b
+pkgrel=1
+pkgdesc="Firefox-based browser with a focus on calm, productive browsing (binary release)"
+arch=('x86_64' 'aarch64')
+url="https://github.com/zen-browser/desktop"
+license=('MPL-2.0')
+
+depends=('gtk3'
+         'libxt'
+         'mime-types'
+         'dbus'
+         'alsa-lib')
+
+optdepends=('ffmpeg: H.264 and AV1 video playback'
+            'libpulse: audio via PulseAudio or pipewire-pulse'
+            'libnotify: desktop notifications')
+
+provides=("zen-browser=$pkgver")
+conflicts=('zen-browser')
+
+source_x86_64=("zen-$pkgver-x86_64.tar.xz::$url/releases/download/$pkgver/zen.linux-x86_64.tar.xz")
+source_aarch64=("zen-$pkgver-aarch64.tar.xz::$url/releases/download/$pkgver/zen.linux-aarch64.tar.xz")
+
+sha256sums_x86_64=('2eaea664b840067ca0ace623bd4f4548fae98f46a98e2ddbdfdcb9253b674bbf')
+sha256sums_aarch64=('73a609b954e7dcef8dc49b1efc9c13b688ecfa24ba1b3f39ad653e9324b889cf')
+
+package() {
+    install -dm755 "$pkgdir/usr/lib"
+    cp -r "$srcdir/zen" "$pkgdir/usr/lib/zen-browser"
+
+    # The bundled updater would replace files pacman owns.
+    rm -f "$pkgdir/usr/lib/zen-browser/updater" \
+          "$pkgdir/usr/lib/zen-browser/updater.ini"
+
+    install -dm755 "$pkgdir/usr/bin"
+    ln -s /usr/lib/zen-browser/zen "$pkgdir/usr/bin/zen-browser"
+
+    for size in 16 32 48 64 128; do
+        install -Dm644 "$srcdir/zen/browser/chrome/icons/default/default$size.png" \
+            "$pkgdir/usr/share/icons/hicolor/${size}x${size}/apps/zen-browser.png"
+    done
+
+    install -Dm644 /dev/stdin "$pkgdir/usr/share/applications/zen-browser.desktop" <<'DESKTOP'
+[Desktop Entry]
+Type=Application
+Name=Zen Browser
+GenericName=Web Browser
+Comment=Browse the World Wide Web
+Exec=zen-browser %u
+Icon=zen-browser
+Terminal=false
+Categories=Network;WebBrowser;
+MimeType=text/html;text/xml;application/xhtml+xml;x-scheme-handler/http;x-scheme-handler/https;
+StartupWMClass=zen
+StartupNotify=true
+DESKTOP
+}
