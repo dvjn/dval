@@ -1,7 +1,7 @@
 # Maintainer: dvjn <git@dvjn.dev>
 
 pkgname=dms-shell-bin
-pkgver=1.5.2
+pkgver=1.5.3
 pkgrel=1
 pkgdesc='Desktop shell for wayland compositors built with Quickshell & GO (binary release)'
 arch=('x86_64' 'aarch64')
@@ -27,8 +27,8 @@ conflicts=('dms-shell' 'dms-shell-git')
 source_x86_64=("dms-full-amd64-${pkgver}.tar.gz::$url/releases/download/v$pkgver/dms-full-amd64.tar.gz")
 source_aarch64=("dms-full-arm64-${pkgver}.tar.gz::$url/releases/download/v$pkgver/dms-full-arm64.tar.gz")
 
-sha256sums_x86_64=('4469218d2d5dc11aab1c11e926807eb23ff7d549454fa8a7df67d1c13d0850ec')
-sha256sums_aarch64=('116d994733f67221bab2097a2edace0aef04a11b719a0d9f51a984ea4d118206')
+sha256sums_x86_64=('ed543447b98568a092845164ea9cc20538ed8efa421214fba2969ab1b90a3f53')
+sha256sums_aarch64=('18ec486382ac3ed742f82e21ba444974f531f483809b476373bb12c6c3c2bfd3')
 
 package() {
     cd "$srcdir"
