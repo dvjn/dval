@@ -180,6 +180,7 @@ dval_cmd_help() {
 usage: $DVAL_NAME <command> [args]
 
   bootstrap, b [base|desktop]    build, install, and set up
+  build                          rebuild the package tree, no pull
   update, u                      pull, rebuild, then pacman -Syu
   help                           this
 
@@ -194,6 +195,7 @@ dval_main() {
 
 	case "$cmd" in
 		bootstrap|b)    dval_cmd_bootstrap "$@" ;;
+		build)          dval_build ;;
 		update|u)       dval_cmd_update "$@" ;;
 		help|-h|--help) dval_cmd_help ;;
 		*)              dval_die "unknown command: $cmd (try '$DVAL_NAME help')" ;;

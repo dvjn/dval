@@ -2,14 +2,14 @@
 
 pkgbase=dval
 pkgname=("dval-base" "dval-desktop")
-pkgver=0.1.2
+pkgver=0.1.3
 pkgrel=1
 arch=("any")
 url="https://github.com/dvjn/dval"
 license=("MIT")
 
 source=("dval" "greetd-config.toml" "greetd-greeter.pam")
-sha256sums=("17aa3adedb745e84b57840dd9bdf7b4a14fbc17f4dcde8497b573eb39f976e82"
+sha256sums=("7f84ede57371d35c24ba0fe7fd38494245dad05409b116aefe4f9c263e195978"
             "9c5efee888e573b818a08a886a7d44f400f57a5bbbcdbbf5d309c8c48fb85287"
             "e9eb324bfb957664761c6527b2632ed1bb0bb30e9818a3946f72f36661b8e767")
 
