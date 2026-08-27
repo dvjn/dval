@@ -62,13 +62,19 @@ dval_build_one() {
 	fi
 
 	echo ":: building $pkg"
-	( cd "$DVAL_SRC_DIR/pkgs/$pkg" && makepkg -f )
+	# -s installs missing dependencies. Without it makepkg stops at the first
+	# package whose depends are not already on the system.
+	( cd "$DVAL_SRC_DIR/pkgs/$pkg" && makepkg -fs )
 
 	for built in "$DVAL_SRC_DIR/pkgs/$pkg"/*.pkg.tar.zst; do
 		[ -e "$built" ] || dval_die "$pkg produced nothing"
 		dval_repo_add "$built"
 		rm -f "$built"
 	done
+
+	# A later package resolves its dependencies through pacman, which cannot
+	# see what repo-add just wrote until the sync database is refreshed.
+	sudo pacman -Sy
 }
 
 dval_build_queue() {
