@@ -1,6 +1,7 @@
 _doc=/usr/share/doc/dval-desktop
 _greetd_config=/etc/greetd/config.toml
 _session_override=/usr/local/share/wayland-sessions/niri.desktop
+_greeter_session=/var/cache/dms-greeter/session.json
 
 _dval_enable_service() {
     # Skip service activation when installing in a chroot.
@@ -17,6 +18,12 @@ _dval_configure() {
     # Override niri's session entry without replacing its package-owned file.
     install -Dm644 "$_doc/niri-session.desktop" "$_session_override"
     echo "wrote $_session_override"
+
+    if [ ! -e "$_greeter_session" ]; then
+        install -Dm644 -o greeter -g greeter \
+            "$_doc/dms-session.json" "$_greeter_session"
+        echo "wrote $_greeter_session"
+    fi
 
     _dval_enable_service greetd
     _dval_enable_service power-profiles-daemon

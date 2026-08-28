@@ -110,6 +110,13 @@ dval_setup_user_base() {
 }
 
 dval_setup_user_desktop() {
+	dms_state_dir=${XDG_STATE_HOME:-$HOME/.local/state}/DankMaterialShell
+	if [ ! -e "$dms_state_dir/session.json" ]; then
+		install -d "$dms_state_dir"
+		install -m644 /usr/share/doc/dval-desktop/dms-session.json \
+			"$dms_state_dir/session.json"
+	fi
+
 	printf '1\n1\n2\ny\n' | dms setup
 
 	niri_config=${XDG_CONFIG_HOME:-$HOME/.config}/niri/config.kdl

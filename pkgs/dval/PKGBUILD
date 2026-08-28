@@ -2,7 +2,7 @@
 
 pkgbase=dval
 pkgname=("dval-base" "dval-desktop")
-pkgver=0.1.7
+pkgver=0.1.8
 pkgrel=1
 arch=("any")
 url="https://github.com/dvjn/dval"
@@ -12,12 +12,16 @@ source=("dval"
         "greetd-config.toml"
         "greetd-greeter.pam"
         "dval-niri-session"
-        "niri-session.desktop")
-sha256sums=("3e3d8911ead4092053bbb59b3f6c752dbba3deafc91b40278952a53d0f3e3c61"
+        "niri-session.desktop"
+        "dms-session.json"
+        "kanchenjunga.jpg")
+sha256sums=("c350feb8ec1ea70c0528277bfbdfee146e0c5cfb7c8ff8220d24dcd19b3d559c"
             "9c5efee888e573b818a08a886a7d44f400f57a5bbbcdbbf5d309c8c48fb85287"
             "e9eb324bfb957664761c6527b2632ed1bb0bb30e9818a3946f72f36661b8e767"
             "b6bb507db895e7bd23110c019ac37747b368442e079ac643741ae44f11d71f2f"
-            "8d515cdd2983db2cf3c72b750c318f1e03227fdc7adaf40fd6c29eaf4a55e5f1")
+            "8d515cdd2983db2cf3c72b750c318f1e03227fdc7adaf40fd6c29eaf4a55e5f1"
+            "e59d33decc6eb3cb9bc51ebf5234def2b5dccda0578bea45e4c1fdee2869c663"
+            "550456d003755134f6aefc0b44cd716bb759dbb20612684f573fd8796e52119b")
 
 package_dval-base() {
     pkgdesc="dvjn's artix linux base (metapackage)"
@@ -94,6 +98,10 @@ package_dval-desktop() {
         "$pkgdir/usr/bin/dval-niri-session"
     install -Dm644 "$srcdir/niri-session.desktop" \
         "$pkgdir/usr/share/doc/$pkgname/niri-session.desktop"
+    install -Dm644 "$srcdir/dms-session.json" \
+        "$pkgdir/usr/share/doc/$pkgname/dms-session.json"
+    install -Dm644 "$srcdir/kanchenjunga.jpg" \
+        "$pkgdir/usr/share/backgrounds/dval/kanchenjunga.jpg"
 
     install -dm755 "$pkgdir/etc/xdg/userspawn/dinit.d/boot.d"
     for svc in pipewire pipewire-pulse wireplumber; do
