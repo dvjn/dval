@@ -31,7 +31,6 @@ dval_repo_init() {
 		repo-add -q "$DVAL_REPO_DIR/$DVAL_NAME.db.tar.zst"
 
 	grep -q "^\[$DVAL_NAME\]" /etc/pacman.conf && return
-	sudo cp /etc/pacman.conf /etc/pacman.conf.bak
 	printf '\n[%s]\nSigLevel = Optional TrustAll\nServer = file://%s\n' \
 		"$DVAL_NAME" "$DVAL_REPO_DIR" | sudo tee -a /etc/pacman.conf > /dev/null
 	echo "added [$DVAL_NAME] to /etc/pacman.conf"
@@ -125,11 +124,6 @@ dval_setup_desktop() {
 	greetd_config=/etc/greetd/config.toml
 	[ -f "$greetd_example" ] || dval_die "dval-desktop is not installed"
 
-	if [ -e "$greetd_config" ]; then
-		greetd_backup=$greetd_config.bak-$(date +%Y%m%d%H%M%S)
-		sudo cp -a "$greetd_config" "$greetd_backup"
-		echo "backed up existing config to $greetd_backup"
-	fi
 	sudo install -Dm644 "$greetd_example" "$greetd_config"
 	echo "wrote $greetd_config"
 
