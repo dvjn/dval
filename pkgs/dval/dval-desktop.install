@@ -1,7 +1,31 @@
+_doc=/usr/share/doc/dval-desktop
+_greetd_config=/etc/greetd/config.toml
+
+_dval_enable_service() {
+    # Skip service activation when installing in a chroot.
+    dinitctl list > /dev/null 2>&1 || return 0
+    [ -e "/etc/dinit.d/boot.d/$1" ] && return 0
+    dinitctl enable "$1"
+}
+
+_dval_configure() {
+    # Install at runtime because greetd owns this path.
+    install -Dm644 "$_doc/greetd-config.toml" "$_greetd_config"
+    echo "wrote $_greetd_config"
+
+    _dval_enable_service greetd
+    _dval_enable_service power-profiles-daemon
+}
+
 post_install() {
+    _dval_configure
     cat << MSG
 
   run 'dval help' for the available commands
 
 MSG
+}
+
+post_upgrade() {
+    _dval_configure
 }

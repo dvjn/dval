@@ -2,14 +2,14 @@
 
 pkgbase=dval
 pkgname=("dval-base" "dval-desktop")
-pkgver=0.1.5
+pkgver=0.1.6
 pkgrel=1
 arch=("any")
 url="https://github.com/dvjn/dval"
 license=("MIT")
 
 source=("dval" "greetd-config.toml" "greetd-greeter.pam")
-sha256sums=("18ff2a6b0ab30e12e5b8dfd75712127438cb17a6868480832fe459edca903b59"
+sha256sums=("3e3d8911ead4092053bbb59b3f6c752dbba3deafc91b40278952a53d0f3e3c61"
             "9c5efee888e573b818a08a886a7d44f400f57a5bbbcdbbf5d309c8c48fb85287"
             "e9eb324bfb957664761c6527b2632ed1bb0bb30e9818a3946f72f36661b8e767")
 
@@ -68,9 +68,7 @@ package_dval-desktop() {
         "ttf-nerd-fonts-symbols"
         "ttf-fira-code"
 
-        # Optional dependencies of the packages above, made hard here.
-        # Choosing which optional features to enable is this metapackage's job.
-        # The packages themselves keep them optional to stay usable standalone.
+        # Promote optional runtime features required by dval-desktop.
         "cava"                   # dms-shell: audio visualizer
         "i2c-tools"              # dms-shell: external monitor brightness
         "matugen"                # dms-shell: wallpaper-based theming
