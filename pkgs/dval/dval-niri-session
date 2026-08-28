@@ -1,0 +1,15 @@
+#!/bin/sh
+# Log compositor output instead of writing it over the greeter.
+set -eu
+
+state_dir=${XDG_STATE_HOME:-$HOME/.local/state}
+mkdir -p "$state_dir"
+
+# Retain one previous session log for crash diagnosis.
+log=$state_dir/niri.log
+if [ -e "$log" ]; then
+    mv -f "$log" "$log.1"
+fi
+exec >"$log" 2>&1
+
+exec dbus-launch --exit-with-session niri --session
