@@ -2,7 +2,7 @@
 
 pkgbase=dval
 pkgname=("dval-base" "dval-desktop")
-pkgver=0.1.8
+pkgver=0.1.9
 pkgrel=1
 arch=("any")
 url="https://github.com/dvjn/dval"
@@ -15,7 +15,7 @@ source=("dval"
         "niri-session.desktop"
         "dms-session.json"
         "kanchenjunga.jpg")
-sha256sums=("c350feb8ec1ea70c0528277bfbdfee146e0c5cfb7c8ff8220d24dcd19b3d559c"
+sha256sums=("b364aef285631984e53129a7a4585f255e3ae839174f70c120c9b9e0410e4886"
             "9c5efee888e573b818a08a886a7d44f400f57a5bbbcdbbf5d309c8c48fb85287"
             "e9eb324bfb957664761c6527b2632ed1bb0bb30e9818a3946f72f36661b8e767"
             "b6bb507db895e7bd23110c019ac37747b368442e079ac643741ae44f11d71f2f"
@@ -69,6 +69,7 @@ package_dval-desktop() {
         "wireplumber-dinit"
         "power-profiles-daemon-dinit"
         "cliphist"
+        "jq"
         "wl-clipboard"
         "slurp"
         "qt6-multimedia-ffmpeg"

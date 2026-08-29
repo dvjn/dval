@@ -109,6 +109,25 @@ dval_setup_user_base() {
 	:
 }
 
+# DMS draws both the desktop background and the lock screen from wallpaperPath,
+# so an empty value leaves a profile with neither.
+dval_set_wallpaper() {
+	session_file=$1
+	default_session=/usr/share/doc/dval-desktop/dms-session.json
+
+	wallpaper=$(jq -r .wallpaperPath "$default_session")
+
+	tmp=$(mktemp "$session_file.XXXXXX")
+	if ! jq --arg path "$wallpaper" '.wallpaperPath = $path' \
+		"$session_file" > "$tmp"; then
+		rm -f "$tmp"
+		dval_die "could not set wallpaper in $session_file"
+	fi
+	chmod 644 "$tmp"
+	mv "$tmp" "$session_file"
+	echo "set wallpaper in $session_file"
+}
+
 dval_setup_user_desktop() {
 	dms_state_dir=${XDG_STATE_HOME:-$HOME/.local/state}/DankMaterialShell
 	if [ ! -e "$dms_state_dir/session.json" ]; then
@@ -122,6 +141,9 @@ dval_setup_user_desktop() {
 	niri_config=${XDG_CONFIG_HOME:-$HOME/.config}/niri/config.kdl
 	grep -q 'spawn-at-startup "dms" "run"' "$niri_config" 2>/dev/null || \
 		dval_die "dms setup did not deploy as expected; run 'dms setup' by hand"
+
+	# Runs after dms setup so the deploy cannot clobber the path.
+	dval_set_wallpaper "$dms_state_dir/session.json"
 }
 
 dval_cmd_bootstrap() {
