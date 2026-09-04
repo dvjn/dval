@@ -1,6 +1,6 @@
 pkgbase = greetd-dms-greeter-bin
 	pkgdesc = DankMaterialShell greeter for greetd (binary release)
-	pkgver = 1.5.3
+	pkgver = 1.6.0
 	pkgrel = 1
 	url = https://github.com/AvengeMedia/DankMaterialShell
 	install = greetd-dms-greeter.install
@@ -16,9 +16,9 @@ pkgbase = greetd-dms-greeter-bin
 	conflicts = greetd-dms-greeter
 	conflicts = greetd-dms-greeter-git
 	backup = etc/greetd/config.toml
-	source_x86_64 = dms-full-amd64-1.5.3.tar.gz::https://github.com/AvengeMedia/DankMaterialShell/releases/download/v1.5.3/dms-full-amd64.tar.gz
-	sha256sums_x86_64 = ed543447b98568a092845164ea9cc20538ed8efa421214fba2969ab1b90a3f53
-	source_aarch64 = dms-full-arm64-1.5.3.tar.gz::https://github.com/AvengeMedia/DankMaterialShell/releases/download/v1.5.3/dms-full-arm64.tar.gz
-	sha256sums_aarch64 = 18ec486382ac3ed742f82e21ba444974f531f483809b476373bb12c6c3c2bfd3
+	source_x86_64 = dms-full-amd64-1.6.0.tar.gz::https://github.com/AvengeMedia/DankMaterialShell/releases/download/v1.6.0/dms-full-amd64.tar.gz
+	sha256sums_x86_64 = c05ba8e05e30a432e348a9f8edcabf62e50bb4a810d0a0282eef8deee5baeec1
+	source_aarch64 = dms-full-arm64-1.6.0.tar.gz::https://github.com/AvengeMedia/DankMaterialShell/releases/download/v1.6.0/dms-full-arm64.tar.gz
+	sha256sums_aarch64 = 6431515df26efa4629f08bdf769e31aea12a5248c487054e39be8f1a0349a025
 
 pkgname = greetd-dms-greeter-bin
